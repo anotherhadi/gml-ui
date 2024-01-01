@@ -168,7 +168,7 @@ func EnableAlternativeBuffer() {
 
 // Disables the alternative buffer
 func DisableAlternativeBuffer() {
-	fmt.Printf("%s[?1049h", ESC)
+	fmt.Printf("%s[?1049l", ESC)
 }
 
 //// Clear/Erase
