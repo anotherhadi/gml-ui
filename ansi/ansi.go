@@ -161,6 +161,16 @@ func ScreenRestore() {
 	fmt.Printf("%s[?47l", ESC)
 }
 
+// Enables the alternative buffer
+func EnableAlternativeBuffer() {
+	fmt.Printf("%s[?1049h", ESC)
+}
+
+// Disables the alternative buffer
+func DisableAlternativeBuffer() {
+	fmt.Printf("%s[?1049h", ESC)
+}
+
 //// Clear/Erase
 
 // Clear the full screen
