@@ -20,13 +20,23 @@ func Repeat(s string, count int) string {
 func SplitPrompt(prompt string, maxCols int) []string {
 	var result []string
 
-	for i := 0; i < len(prompt); i += maxCols {
-		endIndex := i + maxCols
-		if endIndex > len(prompt) {
-			endIndex = len(prompt)
-		}
+	words := strings.Fields(prompt)
 
-		result = append(result, prompt[i:endIndex])
+	var currentLine string
+	for _, word := range words {
+		if len(currentLine)+len(word)+1 <= maxCols {
+			if currentLine != "" {
+				currentLine += " "
+			}
+			currentLine += word
+		} else {
+			result = append(result, currentLine)
+			currentLine = word
+		}
+	}
+
+	if currentLine != "" {
+		result = append(result, currentLine)
 	}
 
 	return result
