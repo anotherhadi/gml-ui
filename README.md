@@ -23,6 +23,7 @@ Easy to set up, use, customize and modify, 'GML-UI' is 100% inspired by [charmbr
   - [Input](#input)
   - [Number Picker](#number-picker)
 - [Outputs](#outputs)
+  - [Paragraph](#paragraph)
   - [ANSI](#ansi)
   - [Asciimoji](#asciimoji)
   - [Loading](#loading)
@@ -42,7 +43,6 @@ go get https://github.com/anotherhadi/gml-ui@latest
 
 - New components
   - Input with placeholder
-  - Paragraph
 - Create more realistic examples:
   - File Picker
   - Image Viewer
@@ -182,6 +182,18 @@ result, err := number_picker.NumberPicker(number_picker.Settings{
 ```
 
 ## Outputs
+
+### Paragraph
+
+![Paragraph Example](src/paragraph.png)
+
+The `paragraph` component is used to print strings with the same look and feel as other components.
+
+Example:
+
+```go
+paragraph.Paragraph("Hello World! This package is used to print strings with the same look and feel as other components.")
+```
 
 ### ANSI
 
