@@ -24,6 +24,7 @@ Easy to set up, use, customize and modify, 'GML-UI' is 100% inspired by [charmbr
   - [Number Picker](#number-picker)
 - [Outputs](#outputs)
   - [Paragraph](#paragraph)
+  - [Asciitext](#asciitext)
   - [ANSI](#ansi)
   - [Asciimoji](#asciimoji)
   - [Loading](#loading)
@@ -193,6 +194,19 @@ Example:
 
 ```go
 paragraph.Paragraph("Hello World! This package is used to print strings with the same look and feel as other components.")
+```
+
+### Asciitext
+
+![Asciitext Example](src/asciitext.png)
+
+The `asciitext` component is used to print large ASCII art text.
+
+Example:
+
+```go
+str := asciitext.AsciiText("Hello world!")
+fmt.Print(str)
 ```
 
 ### ANSI
