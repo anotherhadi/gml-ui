@@ -17,6 +17,7 @@ Easy to set up, use, customize and modify, 'GML-UI' is 100% inspired by [charmbr
 - [Inputs](#inputs)
   - [Selection](#selection)
   - [Selection with Filter](#selection-with-filter)
+  - [List](#list)
   - [Checkbox](#checkbox)
   - [Confirm](#confirm)
   - [Confirm Inline](#confirm-inline)
@@ -107,6 +108,37 @@ It features a 'filter' field that enables the user to filter the available optio
 This component is preferable over `selection` for a large number of options.
 Move with the arrow keys or JK, select an option with CR
 
+### List
+
+![List Example](src/list.png)
+
+The `list` component allows you to quickly prompt the user to choose an option (With Title/Description).
+Move with the arrow keys or HL, select an option with CR
+
+Here is an example that provides the output mentioned above:
+
+```go
+selected, err := list.List(list.Settings{
+  Options: []list.Options{
+    {
+      Title:       "First Option",
+      Description: "There's a description",
+    },
+    {
+      Title:       "Second one",
+      Description: "The next one will not have a description",
+    },
+    {
+      Title: "The last one",
+    },
+  },
+})
+if err != nil {
+  panic(err)
+}
+fmt.Print(selected)
+```
+
 ### Checkbox
 
 ![Checkbox Example](src/checkbox.png)
@@ -123,7 +155,7 @@ Move with the arrow keys or HL, select an option with CR
 
 Here is an example that provides the output mentioned above:
 
- ```go
+```go
 package main
 
 import (
