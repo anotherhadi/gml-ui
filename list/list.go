@@ -14,7 +14,7 @@ func printOptions(settings Settings, selected int) {
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 		if index == selected {
 			fmt.Print(ansi.FgRgb(settings.SelectedTitleForeground.Red, settings.SelectedTitleForeground.Green, settings.SelectedTitleForeground.Blue))
-			fmt.Print("| ")
+			fmt.Print("│ ")
 		} else {
 			fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
 			fmt.Print("  ")
@@ -25,7 +25,7 @@ func printOptions(settings Settings, selected int) {
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 		if index == selected {
 			fmt.Print(ansi.FgRgb(settings.SelectedTitleForeground.Red, settings.SelectedTitleForeground.Green, settings.SelectedTitleForeground.Blue))
-			fmt.Print("| ")
+			fmt.Print("│ ")
 			fmt.Print(ansi.FgRgb(settings.SelectedDescriptionForeground.Red, settings.SelectedDescriptionForeground.Green, settings.SelectedDescriptionForeground.Blue))
 		} else {
 			fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
