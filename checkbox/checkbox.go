@@ -58,7 +58,7 @@ func Checkbox(customSettings ...Settings) (checked []bool, err error) {
 	if len(customSettings) > 0 {
 		settings, err = combineSettings(customSettings[0])
 		if err != nil {
-			return
+			return nil, err
 		}
 	} else {
 		settings = getDefaultSettings()
@@ -82,7 +82,7 @@ func Checkbox(customSettings ...Settings) (checked []bool, err error) {
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
 			utils.Cleanup(uint8(len(settings.Options))+1, !settings.DontCleanup)
-			return checked, err
+			return nil, err
 		}
 
 		if arrow == "down" || ascii == 106 { // Down arrow, J
@@ -96,8 +96,13 @@ func Checkbox(customSettings ...Settings) (checked []bool, err error) {
 		} else if ascii == 32 {
 			checked[selected] = !checked[selected]
 		} else if !(ascii == 13) {
-			utils.Cleanup(uint8(len(settings.Options))+1, !settings.DontCleanup)
-			return checked, errors.New("Key not accepted")
+			if settings.UnknownKeysErr {
+				utils.Cleanup(uint8(len(settings.Options))+1, !settings.DontCleanup)
+				return nil, errors.New("Key not accepted")
+			} else if ascii == 3 {
+				utils.Cleanup(uint8(len(settings.Options))+1, !settings.DontCleanup)
+				return nil, errors.New("SIGINT")
+			}
 		}
 
 		if ascii == 13 { // Enter

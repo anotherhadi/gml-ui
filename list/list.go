@@ -81,8 +81,13 @@ func List(customSettings ...Settings) (selected int, err error) {
 				selected--
 			}
 		} else if !(ascii == 13) {
-			utils.Cleanup(uint8(len(settings.Options))*3, !settings.DontCleanup)
-			return -1, errors.New("Key not accepted")
+			if settings.UnknownKeysErr {
+				utils.Cleanup(uint8(len(settings.Options))*3, !settings.DontCleanup)
+				return -1, errors.New("Key not accepted")
+			} else if ascii == 3 {
+				utils.Cleanup(uint8(len(settings.Options))*3, !settings.DontCleanup)
+				return -1, errors.New("SIGINT")
+			}
 		}
 
 		if ascii == 13 { // Enter

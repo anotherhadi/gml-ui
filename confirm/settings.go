@@ -22,6 +22,7 @@ type Settings struct {
 	Prompt           string
 	Affirmative      string
 	Negative         string
+	UnknownKeysErr   bool
 }
 
 func getDefaultSettings() Settings {
@@ -42,6 +43,7 @@ func getDefaultSettings() Settings {
 		Prompt:           "Are you sure?",
 		Affirmative:      "Yes",
 		Negative:         "No",
+		UnknownKeysErr:   false,
 	}
 }
 
@@ -94,6 +96,10 @@ func combineSettings(customSettings Settings) Settings {
 
 	if customSettings.Negative != "" {
 		defaultSettings.Negative = customSettings.Negative
+	}
+
+	if customSettings.UnknownKeysErr {
+		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
 	}
 
 	return defaultSettings

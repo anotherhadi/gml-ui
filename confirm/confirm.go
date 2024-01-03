@@ -87,7 +87,7 @@ func Confirm(customSettings ...Settings) (selected bool, err error) {
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
 			utils.Cleanup(2, !settings.DontCleanup)
-			return selected, err
+			return false, err
 		}
 
 		if arrow == "left" || ascii == 104 || ascii == 121 { // Left arrow, H or Y
@@ -95,8 +95,13 @@ func Confirm(customSettings ...Settings) (selected bool, err error) {
 		} else if arrow == "right" || ascii == 108 || ascii == 110 { // Right arrow, L or N
 			selected = false
 		} else if !(ascii == 13) {
-			utils.Cleanup(2, !settings.DontCleanup)
-			return selected, errors.New("Key not accepted")
+			if settings.UnknownKeysErr {
+				utils.Cleanup(2, !settings.DontCleanup)
+				return false, errors.New("Key not accepted")
+			} else if ascii == 3 {
+				utils.Cleanup(2, !settings.DontCleanup)
+				return false, errors.New("SIGINT")
+			}
 		}
 
 		if ascii == 13 || ascii == 121 || ascii == 110 { // Enter, Y, N

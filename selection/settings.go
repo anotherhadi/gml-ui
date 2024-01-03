@@ -17,6 +17,7 @@ type Settings struct {
 	MaxCols              uint8
 	Prompt               string
 	Options              []string
+	UnknownKeysErr       bool
 }
 
 func getDefaultSettings() Settings {
@@ -29,6 +30,7 @@ func getDefaultSettings() Settings {
 		MaxCols:              40,
 		Prompt:               "Select an option:",
 		Options:              []string{},
+		UnknownKeysErr:       false,
 	}
 }
 
@@ -67,6 +69,10 @@ func combineSettings(customSettings Settings) (Settings, error) {
 
 	if customSettings.Prompt != "" {
 		defaultSettings.Prompt = customSettings.Prompt
+	}
+
+	if customSettings.UnknownKeysErr {
+		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
 	}
 
 	return defaultSettings, nil

@@ -17,6 +17,7 @@ type Settings struct {
 	CaseSensitive        bool
 	Prompt               string
 	Options              []string
+	UnknownKeysErr       bool
 }
 
 func getDefaultSettings() Settings {
@@ -31,6 +32,7 @@ func getDefaultSettings() Settings {
 		MaxRows:              10,
 		Prompt:               "Select an option:",
 		Options:              []string{},
+		UnknownKeysErr:       false,
 	}
 }
 
@@ -75,6 +77,10 @@ func combineSettings(customSettings Settings) Settings {
 
 	if customSettings.Prompt != "" {
 		defaultSettings.Prompt = customSettings.Prompt
+	}
+
+	if customSettings.UnknownKeysErr {
+		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
 	}
 
 	return defaultSettings

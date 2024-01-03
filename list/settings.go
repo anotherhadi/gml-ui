@@ -20,6 +20,7 @@ type Settings struct {
 	DontCleanup                   bool
 	LeftPadding                   uint8
 	Options                       []Options
+	UnknownKeysErr                bool
 }
 
 func getDefaultSettings() Settings {
@@ -30,6 +31,7 @@ func getDefaultSettings() Settings {
 		DontCleanup:                   false,
 		LeftPadding:                   3,
 		Options:                       []Options{},
+		UnknownKeysErr:                false,
 	}
 }
 
@@ -60,6 +62,10 @@ func combineSettings(customSettings Settings) (Settings, error) {
 
 	if customSettings.LeftPadding != 0 {
 		defaultSettings.LeftPadding = customSettings.LeftPadding
+	}
+
+	if customSettings.UnknownKeysErr {
+		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
 	}
 
 	return defaultSettings, nil

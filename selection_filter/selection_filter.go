@@ -142,8 +142,13 @@ func SelectionFilter(customSettings ...Settings) (selected int, err error) {
 			}
 			return -1, errors.New("Unable to find in list")
 		} else {
-			utils.Cleanup(uint8(len(filteredOptions))+2, !settings.DontCleanup)
-			return -1, errors.New("Key not accepted")
+			if settings.UnknownKeysErr {
+				utils.Cleanup(uint8(len(filteredOptions))+2, !settings.DontCleanup)
+				return -1, errors.New("Key not accepted")
+			} else if ascii == 3 {
+				utils.Cleanup(uint8(len(filteredOptions))+2, !settings.DontCleanup)
+				return -1, errors.New("SIGINT")
+			}
 		}
 
 	}

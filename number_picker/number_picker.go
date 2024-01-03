@@ -152,8 +152,13 @@ func NumberPicker(customSettings ...Settings) (number float64, err error) {
 			number = utils.RoundTo(number, settings.Round)
 			return number, nil
 		} else {
-			utils.Cleanup(4, !settings.DontCleanup)
-			return -1, errors.New("Key not accepted")
+			if settings.UnknownKeysErr {
+				utils.Cleanup(4, !settings.DontCleanup)
+				return -1, errors.New("Key not accepted")
+			} else if ascii == 3 {
+				utils.Cleanup(4, !settings.DontCleanup)
+				return -1, errors.New("SIGINT")
+			}
 		}
 	}
 }

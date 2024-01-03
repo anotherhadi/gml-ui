@@ -20,6 +20,7 @@ type Settings struct {
 	Maximum          float64
 	Minimum          float64
 	Decimal          bool
+	UnknownKeysErr   bool
 }
 
 func getDefaultSettings() Settings {
@@ -37,6 +38,7 @@ func getDefaultSettings() Settings {
 		Maximum:          100,
 		Minimum:          -100,
 		Decimal:          false,
+		UnknownKeysErr:   false,
 	}
 }
 
@@ -93,6 +95,10 @@ func combineSettings(customSettings Settings) Settings {
 
 	if customSettings.Minimum != 0.0 {
 		defaultSettings.Minimum = customSettings.Minimum
+	}
+
+	if customSettings.UnknownKeysErr {
+		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
 	}
 
 	return defaultSettings
