@@ -36,7 +36,7 @@ func getDefaultSettings() Settings {
 		Increment:        1,
 		Round:            2,
 		Maximum:          100,
-		Minimum:          -100,
+		Minimum:          0,
 		Decimal:          false,
 		UnknownKeysErr:   false,
 	}
