@@ -92,9 +92,12 @@ func SelectionFilter(customSettings ...Settings) (selected int, err error) {
 
 	var blankLine int
 	if int(settings.MaxRows) < int(len(settings.Options)) {
-		blankLine = 6 + int(settings.MaxRows)
+		blankLine = 3 + int(settings.MaxRows)
 	} else {
-		blankLine = 5 + int(len(settings.Options))
+		blankLine = 2 + int(len(settings.Options))
+	}
+	if settings.Prompt != "noprompt" {
+		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 3
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(uint8(blankLine))
@@ -102,7 +105,9 @@ func SelectionFilter(customSettings ...Settings) (selected int, err error) {
 	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	printPrompt(settings)
+	if settings.Prompt != "noprompt" {
+		printPrompt(settings)
+	}
 
 	for {
 		var filteredOptions []string = utils.FilterStringsByPrefix(settings.Options, filterBuffer.String(), settings.CaseSensitive)

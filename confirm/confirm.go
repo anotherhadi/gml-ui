@@ -72,14 +72,19 @@ func Confirm(customSettings ...Settings) (selected bool, err error) {
 
 	selected = !settings.DefaultToFalse
 
-	var blankLine int = 5 + int(len(settings.Prompt)/int(settings.MaxCols))
+	var blankLine int = 3
+	if settings.Prompt != "noprompt" {
+		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
+	}
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(uint8(blankLine))
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	printPrompt(settings)
+	if settings.Prompt != "noprompt" {
+		printPrompt(settings)
+	}
 
 	for {
 		printOptions(settings, selected)

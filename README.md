@@ -53,6 +53,7 @@ go get https://github.com/anotherhadi/gml-ui@latest
 ## Components
 
 Almost all components come with a struct named {component}.Settings that allows you to modify various settings, add options, change colors, etc.
+For components with the `Prompt` setting, you can send "noprompt" to disable the prompt and spacing.
 You can refer to the settings.go file for each component to learn more.
 
 You can find an example for each component in the `example` folder.

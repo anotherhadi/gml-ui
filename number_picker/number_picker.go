@@ -83,14 +83,19 @@ func NumberPicker(customSettings ...Settings) (number float64, err error) {
 		maxLength += settings.Round
 	}
 
-	var blankLine int = 7 + int(len(settings.Prompt)/int(settings.MaxCols))
+	var blankLine int = 5
+	if settings.Prompt != "noprompt" {
+		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
+	}
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(uint8(blankLine))
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	printPrompt(settings)
+	if settings.Prompt != "noprompt" {
+		printPrompt(settings)
+	}
 
 	for {
 		printInputPicker(settings, manualInputBuffer.String(), maxLength)

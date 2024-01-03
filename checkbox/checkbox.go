@@ -67,14 +67,19 @@ func Checkbox(customSettings ...Settings) (checked []bool, err error) {
 	var selected int = 0
 	checked = settings.DefaultOptions
 
-	var blankLine int = 3 + int(len(settings.Options))
+	var blankLine int = int(len(settings.Options)) + 1
+	if settings.Prompt != "noprompt" {
+		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 3
+	}
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(uint8(blankLine))
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	printPrompt(settings)
+	if settings.Prompt != "noprompt" {
+		printPrompt(settings)
+	}
 
 	for {
 		printOptions(settings, selected, checked)

@@ -54,14 +54,19 @@ func Selection(customSettings ...Settings) (selected int, err error) {
 
 	selected = 0
 
-	var blankLine int = 3 + int(len(settings.Options))
+	var blankLine int = int(len(settings.Options)) + 1
+	if settings.Prompt != "noprompt" {
+		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
+	}
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(uint8(blankLine))
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	printPrompt(settings)
+	if settings.Prompt != "noprompt" {
+		printPrompt(settings)
+	}
 
 	for {
 		printOptions(settings, selected)
