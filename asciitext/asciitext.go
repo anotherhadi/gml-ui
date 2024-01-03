@@ -1,5 +1,7 @@
 package asciitext
 
+import "github.com/anotherhadi/gml-ui/utils"
+
 func getLetter(letter rune) []string {
 	letters := make(map[string][]string)
 	letters["a"] = []string{
@@ -722,7 +724,16 @@ func getLetter(letter rune) []string {
 	}
 }
 
-func AsciiText(str string) string {
+func AsciiText(str string, customSettings ...Settings) string {
+
+	var settings Settings
+
+	if len(customSettings) > 0 {
+		settings = combineSettings(customSettings[0])
+	} else {
+		settings = getDefaultSettings()
+	}
+
 	var asciiString [6]string
 	var asciiLetter [6]string
 	var result string
@@ -733,6 +744,7 @@ func AsciiText(str string) string {
 		}
 	}
 	for i := 0; i < 6; i++ {
+		result += utils.Repeat(" ", int(settings.LeftPadding))
 		result += asciiString[i] + "\n"
 	}
 	return result
