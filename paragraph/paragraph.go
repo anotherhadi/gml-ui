@@ -8,7 +8,7 @@ import (
 )
 
 func printParagraph(str string, settings Settings) {
-	fmt.Print("\n")
+	fmt.Print(utils.Repeat("\n", int(settings.TopPadding)))
 	fmt.Print(ansi.FgRgb(settings.Foreground.Red, settings.Foreground.Green, settings.Foreground.Blue))
 	if settings.Background != (RGBColor{}) {
 		fmt.Print(ansi.BgRgb(settings.Background.Red, settings.Background.Green, settings.Background.Blue))
@@ -19,7 +19,7 @@ func printParagraph(str string, settings Settings) {
 		fmt.Println(line)
 	}
 	fmt.Print(ansi.Reset)
-	fmt.Print("\n")
+	fmt.Print(utils.Repeat("\n", int(settings.BottomPadding)))
 }
 
 func Paragraph(str string, customSettings ...Settings) {
