@@ -21,6 +21,7 @@ type Settings struct {
 	Minimum          float64
 	Decimal          bool
 	UnknownKeysErr   bool
+	BoxStyle         string
 }
 
 func getDefaultSettings() Settings {
@@ -39,6 +40,7 @@ func getDefaultSettings() Settings {
 		Minimum:          0,
 		Decimal:          false,
 		UnknownKeysErr:   false,
+		BoxStyle:         "-",
 	}
 }
 
@@ -99,6 +101,10 @@ func combineSettings(customSettings Settings) Settings {
 
 	if customSettings.UnknownKeysErr {
 		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
+	}
+
+	if customSettings.BoxStyle != "" {
+		defaultSettings.BoxStyle = customSettings.BoxStyle
 	}
 
 	return defaultSettings

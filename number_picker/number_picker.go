@@ -11,6 +11,44 @@ import (
 	"github.com/anotherhadi/gml-ui/utils"
 )
 
+type boxStyle struct {
+	TopLeft     string
+	TopRight    string
+	BottomLeft  string
+	BottomRight string
+	Verticaly   string
+	Horizontaly string
+}
+
+func getBoxStyle(s string) boxStyle {
+	styles := map[string]boxStyle{
+		"-": {
+			TopLeft:     "┌",
+			TopRight:    "┐",
+			BottomLeft:  "└",
+			BottomRight: "┘",
+			Verticaly:   "│",
+			Horizontaly: "─",
+		},
+		"=": {
+			TopLeft:     "╔",
+			TopRight:    "╗",
+			BottomLeft:  "╚",
+			BottomRight: "╝",
+			Verticaly:   "║",
+			Horizontaly: "═",
+		},
+		"none": {
+			TopLeft:     " ",
+			TopRight:    " ",
+			BottomLeft:  " ",
+			BottomRight: " ",
+			Verticaly:   " ",
+			Horizontaly: " ",
+		},
+	}
+	return styles[s]
+}
 func printPrompt(settings Settings) {
 	fmt.Print("\n")
 	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
@@ -27,10 +65,11 @@ func printInputPicker(settings Settings, number string, maxLength uint8) {
 	ansi.ClearScreenEnd()
 	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	boxStyle := getBoxStyle("-")
 
-	fmt.Print("  ╔")
-	fmt.Print(utils.Repeat("═", int(maxLength)+2))
-	fmt.Print("╗\n")
+	fmt.Print("  " + boxStyle.TopLeft)
+	fmt.Print(utils.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
+	fmt.Print(boxStyle.TopRight + "\n")
 
 	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 	if utils.StringToFloat(number) > settings.Minimum {
@@ -38,14 +77,14 @@ func printInputPicker(settings Settings, number string, maxLength uint8) {
 	} else {
 		fmt.Print("  ")
 	}
-	fmt.Print("║ ")
+	fmt.Print(boxStyle.Verticaly + " ")
 
 	fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
 	fmt.Print(utils.Repeat(" ", int(maxLength)-len(number)))
 	fmt.Printf("%s", number)
 
 	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	fmt.Print(" ║")
+	fmt.Print(" " + boxStyle.Verticaly)
 	if utils.StringToFloat(number) < settings.Maximum {
 		fmt.Print(" > ")
 	} else {
@@ -56,9 +95,9 @@ func printInputPicker(settings Settings, number string, maxLength uint8) {
 	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 
 	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	fmt.Print("  ╚")
-	fmt.Print(utils.Repeat("═", int(maxLength)+2))
-	fmt.Print("╝\n")
+	fmt.Print("  " + boxStyle.BottomLeft)
+	fmt.Print(utils.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
+	fmt.Print(boxStyle.BottomRight + "\n")
 	fmt.Print(ansi.Reset)
 	ansi.CursorUp(3)
 }
