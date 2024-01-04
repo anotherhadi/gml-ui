@@ -22,7 +22,7 @@ func getDefaultSettings() Settings {
 		LeftPadding:   3,
 		TopPadding:    0,
 		BottomPadding: 0,
-		MaxCols:       40,
+		MaxCols:       80,
 	}
 }
 
