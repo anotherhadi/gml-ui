@@ -1,4 +1,4 @@
-package rgbapicker
+package rgba_picker
 
 type RGBColor struct {
 	Red   uint8

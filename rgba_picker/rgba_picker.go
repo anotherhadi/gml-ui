@@ -1,4 +1,4 @@
-package rgbapicker
+package rgba_picker
 
 import (
 	"errors"
