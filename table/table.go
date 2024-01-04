@@ -50,7 +50,7 @@ func getBoxStyle(s string) boxStyle {
 			Verticaly:   "║",
 			Horizontaly: "═",
 		},
-		"default": {
+		"none": {
 			TopLeft:     " ",
 			TopRight:    " ",
 			BottomLeft:  " ",
