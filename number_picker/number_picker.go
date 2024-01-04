@@ -65,7 +65,7 @@ func printInputPicker(settings Settings, number string, maxLength uint8) {
 	ansi.ClearScreenEnd()
 	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	boxStyle := getBoxStyle("-")
+	boxStyle := getBoxStyle(settings.BoxStyle)
 
 	fmt.Print("  " + boxStyle.TopLeft)
 	fmt.Print(utils.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
