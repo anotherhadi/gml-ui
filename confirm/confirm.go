@@ -77,7 +77,7 @@ func Confirm(customSettings ...Settings) (selected bool, err error) {
 		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(uint8(blankLine))
+	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()

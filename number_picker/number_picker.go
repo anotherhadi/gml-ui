@@ -88,7 +88,7 @@ func NumberPicker(customSettings ...Settings) (number float64, err error) {
 		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(uint8(blankLine))
+	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()

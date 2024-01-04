@@ -70,9 +70,9 @@ func printOptions(settings Settings, options []string, selected int, filter stri
 		ansi.CursorUp(1)
 	}
 	if settings.MaxRows < uint8(len(options)) {
-		ansi.CursorUp(settings.MaxRows + 1)
+		ansi.CursorUp(int(settings.MaxRows) + 1)
 	} else {
-		ansi.CursorUp(uint8(len(options)) + 1)
+		ansi.CursorUp(len(options) + 1)
 	}
 
 }
@@ -100,7 +100,7 @@ func SelectionFilter(customSettings ...Settings) (selected int, err error) {
 		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 3
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(uint8(blankLine))
+	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()

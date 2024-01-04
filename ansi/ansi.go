@@ -91,37 +91,37 @@ func BgRgb(red, green, blue uint8) string {
 
 // Move cursor to {line}, {col}
 // Ex: ansi.CursorMove(10,20)
-func CursorMove(line, col uint8) {
+func CursorMove(line, col int) {
 	fmt.Printf("%s[%d;%dH", ESC, line, col)
 }
 
 // Move cursor {line} up
 // Ex: ansi.CursorUp(10)
-func CursorUp(line uint8) {
+func CursorUp(line int) {
 	fmt.Printf("%s[%dA", ESC, line)
 }
 
 // Move cursor {line} down
 // Ex: ansi.CursorDown(10)
-func CursorDown(line uint8) {
+func CursorDown(line int) {
 	fmt.Printf("%s[%dB", ESC, line)
 }
 
 // Move cursor {col} right
 // Ex: ansi.CursorRight(10)
-func CursorRight(col uint8) {
+func CursorRight(col int) {
 	fmt.Printf("%s[%dC", ESC, col)
 }
 
 // Move cursor {col} left
 // Ex: ansi.CursorLeft(10)
-func CursorLeft(col uint8) {
+func CursorLeft(col int) {
 	fmt.Printf("%s[%dD", ESC, col)
 }
 
 // Move cursor to {col}
 // Ex: ansi.CursorCol(10)
-func CursorCol(col uint8) {
+func CursorCol(col int) {
 	fmt.Printf("%s[%dG", ESC, col)
 }
 

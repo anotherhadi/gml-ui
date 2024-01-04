@@ -35,7 +35,7 @@ func printOptions(settings Settings, selected int) {
 		fmt.Print(ansi.Reset)
 		fmt.Print("\n")
 	}
-	ansi.CursorUp(uint8(len(settings.Options)))
+	ansi.CursorUp(len(settings.Options))
 
 }
 
@@ -59,7 +59,7 @@ func Selection(customSettings ...Settings) (selected int, err error) {
 		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(uint8(blankLine))
+	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()

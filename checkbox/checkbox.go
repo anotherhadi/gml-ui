@@ -46,8 +46,7 @@ func printOptions(settings Settings, selected int, checked []bool) {
 		fmt.Print(ansi.Reset)
 		fmt.Print("\n")
 	}
-	ansi.CursorUp(uint8(len(settings.Options)))
-
+	ansi.CursorUp(len(settings.Options))
 }
 
 // TODO: Add minimum/maximum feature
@@ -72,7 +71,7 @@ func Checkbox(customSettings ...Settings) (checked []bool, err error) {
 		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 3
 	}
 	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(uint8(blankLine))
+	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
