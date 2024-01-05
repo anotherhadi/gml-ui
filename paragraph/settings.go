@@ -12,7 +12,7 @@ type Settings struct {
 	LeftPadding   uint8
 	TopPadding    uint8
 	BottomPadding uint8
-	MaxCols       uint8
+	MaxCols       int
 }
 
 func getDefaultSettings() Settings {

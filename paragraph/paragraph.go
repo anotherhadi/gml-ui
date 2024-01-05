@@ -13,7 +13,7 @@ func printParagraph(str string, settings Settings) {
 	if settings.Background != (RGBColor{}) {
 		fmt.Print(ansi.BgRgb(settings.Background.Red, settings.Background.Green, settings.Background.Blue))
 	}
-	var splitedPrompt []string = utils.SplitPrompt(str, int(settings.MaxCols))
+	var splitedPrompt []string = utils.SplitPrompt(str, settings.MaxCols)
 	for _, line := range splitedPrompt {
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
 		fmt.Println(line)
