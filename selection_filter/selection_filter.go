@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/anotherhadi/gml-ui/ansi"
+	"github.com/anotherhadi/gml-ui/asciimoji"
 	"github.com/anotherhadi/gml-ui/getchar"
 	"github.com/anotherhadi/gml-ui/utils"
 )
@@ -42,7 +43,7 @@ func printOptions(settings Settings, options []string, selected int, filter stri
 	if startIndex > 0 {
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)+2))
 		fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
-		fmt.Print("^...^\n")
+		fmt.Print(asciimoji.Up, "   ", asciimoji.Up, "\n")
 	}
 	for index, option := range options {
 		if index >= int(startIndex) && index < int(endIndex) {
@@ -62,7 +63,7 @@ func printOptions(settings Settings, options []string, selected int, filter stri
 	if len(options) > int(endIndex) {
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)+2))
 		fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
-		fmt.Print("v...v\n")
+		fmt.Print(asciimoji.Down, "   ", asciimoji.Down, "\n")
 		fmt.Print(ansi.Reset)
 		ansi.CursorUp(1)
 	}
