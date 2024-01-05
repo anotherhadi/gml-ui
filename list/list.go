@@ -5,14 +5,38 @@ import (
 	"fmt"
 
 	"github.com/anotherhadi/gml-ui/ansi"
+	"github.com/anotherhadi/gml-ui/asciimoji"
 	"github.com/anotherhadi/gml-ui/getchar"
 	"github.com/anotherhadi/gml-ui/utils"
 )
 
-func printOptions(settings Settings, selected int) {
-	for index, option := range settings.Options {
+func printOptions(settings Settings, selected int, maxOptions int) {
+	var goUp int
+
+	var startIndex int = 0
+	var endIndex int = startIndex + maxOptions + 1
+	if endIndex > len(settings.Options)-1 {
+		endIndex--
+	}
+
+	if selected >= endIndex {
+		startIndex = selected - maxOptions + 1
+		endIndex = selected + 1
+	}
+
+	ansi.ClearScreenEnd()
+
+	if startIndex > 0 {
+		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)+2))
+		fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
+		fmt.Print(asciimoji.Up, "   ", asciimoji.Up, "\n\n\n")
+		goUp += 3
+	}
+
+	for index, option := range settings.Options[startIndex:endIndex] {
+		goUp += 3
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-		if index == selected {
+		if index+startIndex == selected {
 			fmt.Print(ansi.FgRgb(settings.SelectedTitleForeground.Red, settings.SelectedTitleForeground.Green, settings.SelectedTitleForeground.Blue))
 			fmt.Print("│ ")
 		} else {
@@ -23,7 +47,7 @@ func printOptions(settings Settings, selected int) {
 		fmt.Print(option.Title)
 		fmt.Print(ansi.Reset, "\n")
 		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-		if index == selected {
+		if index+startIndex == selected {
 			fmt.Print(ansi.FgRgb(settings.SelectedTitleForeground.Red, settings.SelectedTitleForeground.Green, settings.SelectedTitleForeground.Blue))
 			fmt.Print("│ ")
 			fmt.Print(ansi.FgRgb(settings.SelectedDescriptionForeground.Red, settings.SelectedDescriptionForeground.Green, settings.SelectedDescriptionForeground.Blue))
@@ -36,7 +60,15 @@ func printOptions(settings Settings, selected int) {
 		fmt.Print("\n")
 		fmt.Print("\n")
 	}
-	ansi.CursorUp(len(settings.Options) * 3)
+	if endIndex < len(settings.Options) {
+		fmt.Print("\n")
+		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)+2))
+		fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
+		fmt.Print(asciimoji.Down, "   ", asciimoji.Down, "\n")
+		goUp += 2
+	}
+	ansi.CursorUp(goUp)
+	ansi.CursorCol(0)
 
 }
 
@@ -54,17 +86,23 @@ func List(customSettings ...Settings) (selected int, err error) {
 	}
 
 	selected = 0
+	maxOptions := int(settings.MaxRows/3) - 2
+	var blankLine int
+	if maxOptions > len(settings.Options) {
+		maxOptions = len(settings.Options)
+		blankLine = int(maxOptions) * 3
+	} else {
+		blankLine = settings.MaxRows + 3
+	}
 
-	var blankLine int = int(len(settings.Options)*3 + 1)
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(blankLine)
 
 	ansi.CursorSave()
 	ansi.CursorInvisible()
-	fmt.Print("\n")
 
 	for {
-		printOptions(settings, selected)
+		printOptions(settings, selected, maxOptions)
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {

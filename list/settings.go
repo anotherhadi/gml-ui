@@ -21,6 +21,7 @@ type Settings struct {
 	LeftPadding                   uint8
 	Options                       []Options
 	UnknownKeysErr                bool
+	MaxRows                       int
 }
 
 func getDefaultSettings() Settings {
@@ -32,6 +33,7 @@ func getDefaultSettings() Settings {
 		LeftPadding:                   3,
 		Options:                       []Options{},
 		UnknownKeysErr:                false,
+		MaxRows:                       30,
 	}
 }
 
@@ -66,6 +68,10 @@ func combineSettings(customSettings Settings) (Settings, error) {
 
 	if customSettings.UnknownKeysErr {
 		defaultSettings.UnknownKeysErr = customSettings.UnknownKeysErr
+	}
+
+	if customSettings.MaxRows != 0 {
+		defaultSettings.MaxRows = customSettings.MaxRows
 	}
 
 	return defaultSettings, nil
