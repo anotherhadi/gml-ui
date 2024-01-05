@@ -94,6 +94,9 @@ func List(customSettings ...Settings) (selected int, err error) {
 	} else {
 		blankLine = settings.MaxRows + 3
 	}
+	if maxOptions == 0 {
+		return -1, errors.New("Need more rows")
+	}
 
 	fmt.Print(utils.Repeat("\n", blankLine))
 	ansi.CursorUp(blankLine)
