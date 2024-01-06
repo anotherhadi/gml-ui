@@ -29,7 +29,12 @@ func printOptions(settings Settings, options []string, selected int, filter stri
 	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
 	fmt.Print("Filter: ")
 	fmt.Print(ansi.FgRgb(settings.UnselectedForeground.Red, settings.UnselectedForeground.Green, settings.UnselectedForeground.Blue))
-	fmt.Print(filter)
+	ansi.ClearLineEnd()
+	if filter == "" {
+		fmt.Print("<type to add filter>")
+	} else {
+		fmt.Print(filter)
+	}
 	fmt.Print("\n")
 
 	var startIndex uint8 = 0
