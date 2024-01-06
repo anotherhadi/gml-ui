@@ -85,7 +85,7 @@ func List(customSettings ...Settings) (selected int, err error) {
 		settings = getDefaultSettings()
 	}
 
-	selected = 0
+	selected = settings.DefaultSelected
 	maxOptions := int(settings.MaxRows/3) - 2
 	var blankLine int
 	if maxOptions > len(settings.Options) {

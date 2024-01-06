@@ -23,6 +23,7 @@ type Settings struct {
 	UnknownKeysErr                bool
 	MaxRows                       int
 	DontLoop                      bool
+	DefaultSelected               int
 }
 
 func getDefaultSettings() Settings {
@@ -35,6 +36,7 @@ func getDefaultSettings() Settings {
 		Options:                       []Options{},
 		UnknownKeysErr:                false,
 		MaxRows:                       30,
+		DefaultSelected:               0,
 		DontLoop:                      false,
 	}
 }
@@ -74,6 +76,10 @@ func combineSettings(customSettings Settings) (Settings, error) {
 
 	if customSettings.MaxRows != 0 {
 		defaultSettings.MaxRows = customSettings.MaxRows
+	}
+
+	if customSettings.DefaultSelected != 0 {
+		defaultSettings.DefaultSelected = customSettings.DefaultSelected
 	}
 
 	if customSettings.DontLoop {
