@@ -116,10 +116,14 @@ func List(customSettings ...Settings) (selected int, err error) {
 		if arrow == "down" || ascii == 106 { // Down arrow, J
 			if selected < len(settings.Options)-1 {
 				selected++
+			} else if !settings.DontLoop {
+				selected = 0
 			}
 		} else if arrow == "up" || ascii == 107 { // Up arrow, K
 			if selected > 0 {
 				selected--
+			} else if !settings.DontLoop {
+				selected = len(settings.Options) - 1
 			}
 		} else if !(ascii == 13) {
 			if settings.UnknownKeysErr {
