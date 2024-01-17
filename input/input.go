@@ -1,51 +1,42 @@
+// https://github.com/anotherhadi/gml-ui
 package input
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
-func printPrompt(settings Settings) {
-	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
-	fmt.Print(settings.Prompt, " ")
+func printPrompt(prompt string, settings settings.Settings) {
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.TextColor))
+	fmt.Print(prompt, " ")
 	fmt.Print(ansi.Reset)
 }
 
-func Input(customSettings ...Settings) (result string, err error) {
+func Input(prompt string, customSettings ...settings.Settings) (result string, err error) {
 
-	var settings Settings
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
-
-	printPrompt(settings)
+	printPrompt(prompt, settings)
 
 	var input string
 
-	fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 	inputReader := bufio.NewReader(os.Stdin)
 	input, err = inputReader.ReadString('\n')
 	fmt.Print(ansi.Reset)
 	if err != nil {
 		return "", err
 	}
-	if !settings.DontCleanup {
-		ansi.CursorUp(2)
-		ansi.ClearScreenEnd()
-	} else {
-		fmt.Print("\n")
-	}
+	fmt.Print(strings.Repeat("\n", settings.BottomPadding))
 	if input == "\n" {
-		return settings.Default, nil
+		return settings.DefaultString, nil
 	}
 	return input[:len(input)-1], nil
 }
