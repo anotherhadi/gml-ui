@@ -1,3 +1,4 @@
+// https://github.com/anotherhadi/gml-ui
 package confirm_inline
 
 import (
@@ -6,21 +7,15 @@ import (
 	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
-func printPrompt(settings Settings) {
-	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
-	fmt.Print(settings.Prompt, " ")
-	fmt.Print(ansi.Reset)
-}
-
-func printConfirm(settings Settings) {
-	fmt.Print(ansi.FgRgb(settings.ConfirmForeground.Red, settings.ConfirmForeground.Green, settings.ConfirmForeground.Blue))
+func printConfirm(prompt string, settings settings.Settings) {
+	fmt.Print(ansi.FgRgbSettings(settings.TextColor))
+	fmt.Print(prompt, " ")
+	fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 	fmt.Print("[")
-	if !settings.DefaultToFalse {
+	if settings.DefaultBool {
 		fmt.Print("Y/n")
 	} else {
 		fmt.Print("y/N")
@@ -29,33 +24,22 @@ func printConfirm(settings Settings) {
 	fmt.Print(ansi.Reset)
 }
 
-func ConfirmInline(customSettings ...Settings) (result bool, err error) {
+func ConfirmInline(prompt string, customSettings ...settings.Settings) (result bool, err error) {
 
-	var settings Settings
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
-
-	printPrompt(settings)
-	printConfirm(settings)
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
+	printConfirm(prompt, settings)
 
 	var input string
 
 	n, err := fmt.Scanf("%s", &input)
-	if !settings.DontCleanup {
-		ansi.CursorUp(2)
-		ansi.ClearScreenEnd()
-	} else {
-		fmt.Print("\n")
-	}
+	fmt.Print(strings.Repeat("\n", settings.BottomPadding))
 	if err != nil && n != 0 {
 		return
 	}
 	if n == 0 {
-		return !settings.DefaultToFalse, nil
+		return settings.DefaultBool, nil
 	}
 	if strings.ToLower(input) == "yes" || strings.ToLower(input) == "y" {
 		return true, nil
