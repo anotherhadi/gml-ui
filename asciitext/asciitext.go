@@ -1,6 +1,11 @@
+// https://github.com/anotherhadi/gml-ui
 package asciitext
 
-import "github.com/anotherhadi/gml-ui/utils"
+import (
+	"strings"
+
+	"github.com/anotherhadi/gml-ui/settings"
+)
 
 func getLetter(letter rune) []string {
 	letters := make(map[string][]string)
@@ -724,28 +729,34 @@ func getLetter(letter rune) []string {
 	}
 }
 
-func AsciiText(str string, customSettings ...Settings) string {
+func AsciiText(str string, customSettings ...settings.Settings) string {
 
-	var settings Settings
-
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
+	settings := settings.GetSettings(customSettings)
 
 	var asciiString [6]string
 	var asciiLetter [6]string
 	var result string
+
 	for _, letter := range str {
 		asciiLetter = [6]string(getLetter(letter))
 		for i := 0; i < 6; i++ {
 			asciiString[i] += asciiLetter[i]
 		}
 	}
+
+	result += strings.Repeat("\n", settings.TopPadding)
 	for i := 0; i < 6; i++ {
-		result += utils.Repeat(" ", int(settings.LeftPadding))
-		result += asciiString[i] + "\n"
+		result += strings.Repeat(" ", int(settings.LeftPadding))
+		if len(asciiString[i]) > settings.MaxCols-settings.LeftPadding {
+			result += asciiString[i][:settings.MaxCols-settings.LeftPadding]
+		} else {
+			result += asciiString[i]
+		}
+		if i < 5 {
+			result += "\n"
+		}
 	}
+	result += strings.Repeat("\n", settings.BottomPadding)
+
 	return result
 }
