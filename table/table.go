@@ -1,11 +1,12 @@
+// https://github.com/anotherhadi/gml-ui
 package table
 
 import (
-	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
 type boxStyle struct {
@@ -67,60 +68,30 @@ func getBoxStyle(s string) boxStyle {
 	return styles[s]
 }
 
-// TODO: Elements wrapping, label decoration, Text alignment
-func Table(customSettings ...Settings) error {
+func Table(table [][]string, customSettings ...settings.Settings) error {
 
-	var settings Settings
-	var err error
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings, err = combineSettings(customSettings[0])
-		if err != nil {
-			return err
-		}
-	} else {
-		return errors.New("No Elements")
-	}
-
-	var cols_length []int = make([]int, len(settings.Elements[0]))
+	var cols_length []int = make([]int, len(table[0]))
 	var boxStyle boxStyle = getBoxStyle(settings.Style)
-	// var rows_length []int = make([]int, len(settings.Elements))
 
-	for _, row := range settings.Elements {
+	for _, row := range table {
 		for icol, col := range row {
-			if len(col) > int(settings.MaxLengthsCol) {
-				cols_length[icol] = int(settings.MaxLengthsCol)
+			if len(col) > int(settings.MaxCols) {
+				cols_length[icol] = int(settings.MaxCols)
 				break
 			}
 			if len(col) > cols_length[icol] {
 				cols_length[icol] = len(col)
 			}
-			// size := int(len(col) / int(settings.MaxLengthsCol))
-			// if len(col)%int(settings.MaxLengthsCol) != 0 {
-			// 	size++
-			// }
-			// if size > rows_length[irow] {
-			// 	rows_length[irow] = size
-			// }
 		}
 	}
 
-	// var table_width int
-	// for _, col := range cols_length {
-	// 	table_width += col + 3
-	// }
-	// table_width -= 1
-	// var table_height int
-	// for _, row := range rows_length {
-	// 	table_height += row + 1
-	// }
-	// table_height -= 1
-
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(boxStyle.TopLeft)
 	for i, col := range cols_length {
-		fmt.Print(utils.Repeat(boxStyle.Horizontaly, col+2))
+		fmt.Print(strings.Repeat(boxStyle.Horizontaly, col+2))
 		if i < len(cols_length)-1 {
 			fmt.Print(boxStyle.ToDown)
 		}
@@ -128,41 +99,42 @@ func Table(customSettings ...Settings) error {
 	fmt.Print(boxStyle.TopRight)
 	fmt.Print("\n")
 
-	for irow, row := range settings.Elements {
-		fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	for irow, row := range table {
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+
+		fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 		fmt.Print(boxStyle.Verticaly)
 		for icol, col := range row {
 			fmt.Print(" ")
 			var length int
-			fmt.Print(ansi.FgRgb(settings.TextForeground.Red, settings.TextForeground.Green, settings.TextForeground.Blue))
+			fmt.Print(ansi.FgRgbSettings(settings.TextColor))
 			if irow == 0 {
-				fmt.Print(ansi.FgRgb(settings.LabelForeground.Red, settings.LabelForeground.Green, settings.LabelForeground.Blue))
+				fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 			}
-			if len(col) > int(settings.MaxLengthsCol) {
-				length = int(settings.MaxLengthsCol)
-				fmt.Print(col[:settings.MaxLengthsCol-2])
-				fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+			if len(col) > int(settings.MaxCols) {
+				length = int(settings.MaxCols)
+				fmt.Print(col[:settings.MaxCols-2])
+				fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 				fmt.Print("..")
 			} else {
 				length = len(col)
 				fmt.Print(col)
 			}
-			fmt.Print(utils.Repeat(" ", cols_length[icol]-length))
+			fmt.Print(strings.Repeat(" ", cols_length[icol]-length))
 			fmt.Print(" ")
 			if icol < len(row)-1 {
-				fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+				fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 				fmt.Print(boxStyle.Verticaly)
 			}
 		}
-		fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 		fmt.Print(boxStyle.Verticaly)
 		fmt.Print("\n")
-		if settings.Separator && irow != len(settings.Elements)-1 {
-			fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+		if irow != len(table)-1 {
+			fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 			fmt.Print(boxStyle.ToRight)
 			for i, col := range cols_length {
-				fmt.Print(utils.Repeat(boxStyle.Horizontaly, col+2))
+				fmt.Print(strings.Repeat(boxStyle.Horizontaly, col+2))
 				if i < len(cols_length)-1 {
 					fmt.Print(boxStyle.Middle)
 				}
@@ -172,11 +144,11 @@ func Table(customSettings ...Settings) error {
 		}
 	}
 
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(boxStyle.BottomLeft)
 	for i, col := range cols_length {
-		fmt.Print(utils.Repeat(boxStyle.Horizontaly, col+2))
+		fmt.Print(strings.Repeat(boxStyle.Horizontaly, col+2))
 		if i < len(cols_length)-1 {
 			fmt.Print(boxStyle.ToUp)
 		}
