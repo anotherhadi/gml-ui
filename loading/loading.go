@@ -1,54 +1,46 @@
+// https://github.com/anotherhadi/gml-ui
 package loading
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/anotherhadi/gml-ui/ansi"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
-func Loading(loadingChan chan bool, customSettings ...Settings) {
+func Loading(loadingChan chan bool, customSettings ...settings.Settings) {
 
-	var settings Settings
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
 	var frames []string = []string{"⣾ ", "⣽ ", "⣻ ", "⢿ ", "⡿ ", "⣟ ", "⣯ ", "⣷ "}
+	var fps int = 10
 	var frame_index uint8 = 0
 
-	fmt.Print("\n")
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 	for {
 		select {
 		case <-loadingChan:
-			if !settings.DontCleanup {
-				fmt.Print("\r")
-				fmt.Print(utils.Repeat(" ", 2+len(settings.Message)+int(settings.LeftPadding)))
-				fmt.Print("\r")
-				ansi.CursorUp(1)
-			} else {
-				fmt.Print("\n\n")
-			}
+			fmt.Print("\r")
+			ansi.LineClear()
 			return
 
 		default:
 			fmt.Print("\r")
-			fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+			fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 
-			fmt.Print(ansi.FgRgb(settings.LoadingForeground.Red, settings.LoadingForeground.Green, settings.LoadingForeground.Blue))
+			fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 			fmt.Print(frames[frame_index])
 			frame_index++
 			if frame_index >= uint8(len(frames)) {
 				frame_index = 0
 			}
-			fmt.Print(ansi.FgRgb(settings.MessageForeground.Red, settings.MessageForeground.Green, settings.MessageForeground.Blue))
-			fmt.Print(settings.Message)
+			fmt.Print(ansi.FgRgbSettings(settings.TextColor))
+			fmt.Print("Loading...")
 
 			fmt.Print(ansi.Reset)
-			time.Sleep(time.Second / time.Duration(settings.FPS))
+			time.Sleep(time.Second / time.Duration(fps))
 		}
 	}
 }
