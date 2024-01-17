@@ -1,13 +1,15 @@
+// https://github.com/anotherhadi/gml-ui
 package rgba_picker
 
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
 	"github.com/anotherhadi/gml-ui/asciimoji"
 	"github.com/anotherhadi/gml-ui/getchar"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
 type boxStyle struct {
@@ -49,55 +51,45 @@ func getBoxStyle(s string) boxStyle {
 	return styles[s]
 }
 
-func printPrompt(settings Settings) {
-	fmt.Print("\n")
-	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
-	var splitedPrompt []string = utils.SplitPrompt(settings.Prompt, int(settings.MaxCols))
-	for _, line := range splitedPrompt {
-		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-		fmt.Println(line)
-	}
-	fmt.Print(ansi.Reset)
-	fmt.Print("\n")
-}
-
-func printRgbaPicker(settings Settings, rgba [4]int, selected int) {
-	ansi.ClearScreenEnd()
+func printRgbaPicker(settings settings.Settings, rgba [4]int, selected int) {
+	ansi.CursorUpN(settings.TopPadding + 5 + settings.BottomPadding)
+	ansi.ScreenClearDown()
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 	length := 5*4 + 3
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	boxStyle := getBoxStyle(settings.BoxStyle)
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+	boxStyle := getBoxStyle(settings.Style)
 
 	fmt.Print("   ")
 	for i := 0; i < 4; i++ {
 		if i == selected {
-			fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
+			fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 		}
 		fmt.Print(asciimoji.Up)
-		fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-		fmt.Print(utils.Repeat(" ", 5))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+		fmt.Print(strings.Repeat(" ", 5))
 	}
 	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(boxStyle.TopLeft)
-	fmt.Print(utils.Repeat(boxStyle.Horizontaly, length))
+	fmt.Print(strings.Repeat(boxStyle.Horizontaly, length))
 	fmt.Print(boxStyle.TopRight)
 	fmt.Print("   ")
 	fmt.Print(ansi.BgRgb(uint8(rgba[0]), uint8(rgba[1]), uint8(rgba[2])))
 	fmt.Print("   ")
 	fmt.Print(ansi.Reset)
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 	fmt.Print("\n")
 
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(boxStyle.Verticaly)
 	for i := 0; i < 4; i++ {
 		fmt.Print(" ")
 		if i == selected {
-			fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
+			fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 		}
 		fmt.Printf("%3d", rgba[i])
-		fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 		fmt.Print(" ")
 		fmt.Print(boxStyle.Verticaly)
 	}
@@ -105,84 +97,69 @@ func printRgbaPicker(settings Settings, rgba [4]int, selected int) {
 	fmt.Print(ansi.BgRgb(uint8(rgba[0]), uint8(rgba[1]), uint8(rgba[2])))
 	fmt.Print("   ")
 	fmt.Print(ansi.Reset)
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 
 	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print(boxStyle.BottomLeft)
-	fmt.Print(utils.Repeat(boxStyle.Horizontaly, length))
+	fmt.Print(strings.Repeat(boxStyle.Horizontaly, length))
 	fmt.Print(boxStyle.BottomRight)
 	fmt.Print("   ")
 	fmt.Print(ansi.BgRgb(uint8(rgba[0]), uint8(rgba[1]), uint8(rgba[2])))
 	fmt.Print("   ")
 	fmt.Print(ansi.Reset)
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	fmt.Print("   ")
 	for i := 0; i < 4; i++ {
 		if i == selected {
-			fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
+			fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
 		}
 		fmt.Print(asciimoji.Down)
-		fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-		fmt.Print(utils.Repeat(" ", 5))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
+		fmt.Print(strings.Repeat(" ", 5))
 	}
 	fmt.Print("\n")
 
+	fmt.Print(strings.Repeat("\n", settings.BottomPadding))
+
 	fmt.Print(ansi.Reset)
-	ansi.CursorUp(5)
 }
 
-func RgbaPicker(customSettings ...Settings) (rgba [4]int, err error) {
+func RgbaPicker(customSettings ...settings.Settings) (rgba [4]int, err error) {
 
-	var settings Settings
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
-
-	rgba = settings.Default
+	rgba = [4]int{int(settings.DefaultColor.Red), int(settings.DefaultColor.Green), int(settings.DefaultColor.Blue), 255}
 	var selected int = 0
 
-	var blankLine int = 6
-	if settings.Prompt != "noprompt" {
-		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
-	}
-	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(blankLine)
-
-	ansi.CursorSave()
 	ansi.CursorInvisible()
 
-	if settings.Prompt != "noprompt" {
-		printPrompt(settings)
-	}
+	fmt.Print(strings.Repeat("\n", settings.TopPadding+5+settings.BottomPadding))
 
 	for {
 		printRgbaPicker(settings, rgba, selected)
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			utils.Cleanup(6, !settings.DontCleanup)
+			ansi.CursorVisible()
 			return [4]int{}, err
 		}
 
-		if arrow == "left" || ascii == 104 { // Left arrow, Down arrow, H or J
+		if arrow == "left" || ascii == 104 { // Left arrow or H
 			if selected != 0 {
 				selected--
 			}
-		} else if arrow == "right" || ascii == 108 { // Right arrow, Up arrow, L or K
+		} else if arrow == "right" || ascii == 108 { // Right arrow or L
 			if selected != 3 {
 				selected++
 			}
-		} else if arrow == "down" || ascii == 106 {
+		} else if arrow == "down" || ascii == 106 { // Down arrow or J
 			if rgba[selected] != 0 {
 				rgba[selected]--
 			}
-		} else if arrow == "up" || ascii == 107 {
+		} else if arrow == "up" || ascii == 107 { // Up Arrow or K
 			if rgba[selected] != 255 {
 				rgba[selected]++
 			}
@@ -194,14 +171,14 @@ func RgbaPicker(customSettings ...Settings) (rgba [4]int, err error) {
 		} else if ascii == 127 { // Del
 			rgba[selected] = int(rgba[selected] / 10)
 		} else if ascii == 13 { // CR
-			utils.Cleanup(6, !settings.DontCleanup)
+			ansi.CursorVisible()
 			return rgba, nil
 		} else {
-			if settings.UnknownKeysErr {
-				utils.Cleanup(6, !settings.DontCleanup)
+			if settings.ExitOnUnknownKey {
+				ansi.CursorVisible()
 				return [4]int{}, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				utils.Cleanup(6, !settings.DontCleanup)
+				ansi.CursorVisible()
 				return [4]int{}, errors.New("SIGINT")
 			}
 		}
