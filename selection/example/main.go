@@ -20,6 +20,7 @@ func main() {
 		settings.Settings{
 			Filter:   true,
 			DontLoop: true,
+			MaxRows:  5,
 		},
 	)
 	if err != nil {

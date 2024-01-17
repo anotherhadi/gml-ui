@@ -156,7 +156,7 @@ func Selection(options []string, customSettings ...settings.Settings) (selected 
 	var previousLength int = len(options)
 
 	if len(options) > settings.MaxRows-settings.TopPadding-settings.BottomPadding {
-		fmt.Print(strings.Repeat("\n", settings.MaxRows-1))
+		fmt.Print(strings.Repeat("\n", settings.MaxRows))
 	} else {
 		fmt.Print(strings.Repeat("\n", settings.TopPadding+len(options)+settings.BottomPadding))
 	}
