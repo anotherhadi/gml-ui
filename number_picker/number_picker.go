@@ -1,14 +1,17 @@
+// https://github.com/anotherhadi/gml-ui
 package number_picker
 
 import (
 	"bytes"
 	"errors"
 	"fmt"
+	"math"
+	"strconv"
 	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
 	"github.com/anotherhadi/gml-ui/getchar"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
 type boxStyle struct {
@@ -49,135 +52,147 @@ func getBoxStyle(s string) boxStyle {
 	}
 	return styles[s]
 }
-func printPrompt(settings Settings) {
-	fmt.Print("\n")
-	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
-	var splitedPrompt []string = utils.SplitPrompt(settings.Prompt, int(settings.MaxCols))
-	for _, line := range splitedPrompt {
-		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-		fmt.Println(line)
-	}
-	fmt.Print(ansi.Reset)
-	fmt.Print("\n")
-}
 
-func printInputPicker(settings Settings, number string, maxLength uint8) {
-	ansi.ClearScreenEnd()
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
-	boxStyle := getBoxStyle(settings.BoxStyle)
+func printInputPicker(settings settings.Settings, number string, maxLength int) {
+
+	boxStyle := getBoxStyle(settings.Style)
+	ansi.CursorUpN(settings.TopPadding + 3 + settings.BottomPadding)
+	ansi.ScreenClearEnd()
+
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
+
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 
 	fmt.Print("  " + boxStyle.TopLeft)
-	fmt.Print(utils.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
+	fmt.Print(strings.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
 	fmt.Print(boxStyle.TopRight + "\n")
 
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	if utils.StringToFloat(number) > settings.Minimum {
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
+	if stringToFloat(number) > settings.Minimum {
 		fmt.Print("< ")
 	} else {
 		fmt.Print("  ")
 	}
 	fmt.Print(boxStyle.Verticaly + " ")
 
-	fmt.Print(ansi.FgRgb(settings.InputForeground.Red, settings.InputForeground.Green, settings.InputForeground.Blue))
-	fmt.Print(utils.Repeat(" ", int(maxLength)-len(number)))
+	fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
+	fmt.Print(strings.Repeat(" ", int(maxLength)-len(number)))
 	fmt.Printf("%s", number)
 
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 	fmt.Print(" " + boxStyle.Verticaly)
-	if utils.StringToFloat(number) < settings.Maximum {
+	if stringToFloat(number) < settings.Maximum {
 		fmt.Print(" > ")
 	} else {
 		fmt.Print("  ")
 	}
 
 	fmt.Print("\n")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 
-	fmt.Print(ansi.FgRgb(settings.BorderForeground.Red, settings.BorderForeground.Green, settings.BorderForeground.Blue))
+	fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 	fmt.Print("  " + boxStyle.BottomLeft)
-	fmt.Print(utils.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
+	fmt.Print(strings.Repeat(boxStyle.Horizontaly, int(maxLength)+2))
 	fmt.Print(boxStyle.BottomRight + "\n")
 	fmt.Print(ansi.Reset)
-	ansi.CursorUp(3)
+	fmt.Print(strings.Repeat("\n", settings.BottomPadding))
 }
 
-func NumberPicker(customSettings ...Settings) (number float64, err error) {
-
-	var settings Settings
-
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
+func stringToFloat(str string) float64 {
+	result, err := strconv.ParseFloat(str, 64)
+	if err != nil {
+		return 0
 	}
+	return result
+}
+
+func floatToString(n float64) string {
+	return strconv.FormatFloat(n, 'f', -1, 64)
+}
+
+func roundTo(n float64, decimals int) float64 {
+	return math.Round(n*math.Pow(10, float64(decimals))) / math.Pow(10, float64(decimals))
+}
+
+func countDigitsAfterDecimal(num float64) int {
+	strNum := fmt.Sprintf("%g", num)
+	decimalPos := strings.Index(strNum, ".")
+	if decimalPos != -1 {
+		return len(strNum) - decimalPos - 1
+	}
+	return 0
+}
+
+func NumberPicker(customSettings ...settings.Settings) (number float64, err error) {
+
+	settings := settings.GetSettings(customSettings)
 
 	var manualInputBuffer bytes.Buffer
-	manualInputBuffer.WriteString(utils.FloatToString(settings.Default))
-	var maxLength uint8 = uint8(len(utils.FloatToString(settings.Maximum)))
-	if maxLength < uint8(len(utils.FloatToString(settings.Minimum))) {
-		maxLength = uint8(len(utils.FloatToString(settings.Minimum)))
+	if settings.Decimal == 0 {
+		manualInputBuffer.WriteString(floatToString(float64(settings.DefaultInt)))
+	} else {
+		manualInputBuffer.WriteString(floatToString(settings.DefaultFloat))
 	}
-	if settings.Decimal {
-		maxLength += settings.Round
+	var maxLength int = len(floatToString(settings.Maximum))
+	if maxLength < len(floatToString(settings.Minimum)) {
+		maxLength = len(floatToString(settings.Minimum))
+	}
+	if settings.Decimal != 0 {
+		maxLength += settings.Decimal
 	}
 
-	var blankLine int = 5
-	if settings.Prompt != "noprompt" {
-		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
-	}
-	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(blankLine)
-
-	ansi.CursorSave()
 	ansi.CursorInvisible()
-
-	if settings.Prompt != "noprompt" {
-		printPrompt(settings)
-	}
+	fmt.Print(strings.Repeat("\n", settings.TopPadding+3+settings.BottomPadding))
 
 	for {
 		printInputPicker(settings, manualInputBuffer.String(), maxLength)
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			utils.Cleanup(4, !settings.DontCleanup)
+			ansi.CursorVisible()
 			return -1, err
 		}
 
 		if arrow == "left" || arrow == "down" || ascii == 104 || ascii == 106 { // Left arrow, Down arrow, H or J
-			temp := utils.StringToFloat(manualInputBuffer.String())
+			temp := stringToFloat(manualInputBuffer.String())
 			temp -= settings.Increment
-			temp = utils.RoundTo(temp, settings.Round)
+			temp = roundTo(temp, settings.Decimal)
 			if temp <= settings.Maximum && temp >= settings.Minimum {
 				manualInputBuffer.Reset()
-				manualInputBuffer.WriteString(utils.FloatToString(temp))
+				manualInputBuffer.WriteString(floatToString(temp))
 			}
 		} else if arrow == "right" || arrow == "up" || ascii == 108 || ascii == 107 { // Right arrow, Up arrow, L or K
-			temp := utils.StringToFloat(manualInputBuffer.String())
+			temp := stringToFloat(manualInputBuffer.String())
 			temp += settings.Increment
-			temp = utils.RoundTo(temp, settings.Round)
+			temp = roundTo(temp, settings.Decimal)
 			if temp <= settings.Maximum && temp >= settings.Minimum {
 				manualInputBuffer.Reset()
-				manualInputBuffer.WriteString(utils.FloatToString(temp))
+				manualInputBuffer.WriteString(floatToString(temp))
 			}
 
 		} else if ascii >= 48 && ascii <= 57 { // Manually input a number
-			if manualInputBuffer.String() == utils.FloatToString(settings.Default) {
-				manualInputBuffer.Reset()
-			}
 			manualInputBuffer.WriteString(string(ascii))
-			if utils.StringToFloat(manualInputBuffer.String()) > settings.Maximum || utils.StringToFloat(manualInputBuffer.String()) < settings.Minimum {
+			if stringToFloat(manualInputBuffer.String()) > settings.Maximum || stringToFloat(manualInputBuffer.String()) < settings.Minimum {
 				if manualInputBuffer.Len() > 0 {
 					manualInputBuffer.Truncate(manualInputBuffer.Len() - 1)
 				}
-			} else if utils.CountDigitsAfterDecimal(utils.StringToFloat(manualInputBuffer.String())) > int(settings.Round) {
+			} else if countDigitsAfterDecimal(stringToFloat(manualInputBuffer.String())) > int(settings.Decimal) {
 				manualInputBuffer.Truncate(manualInputBuffer.Len() - 1)
 			}
+			if strings.HasPrefix(manualInputBuffer.String(), "0") && len(manualInputBuffer.String()) > 1 {
+				temp := manualInputBuffer.String()
+				manualInputBuffer.Reset()
+				manualInputBuffer.WriteString(temp[1:])
+			}
 		} else if ascii == 46 { // Dot
-			if !settings.Decimal {
-				utils.Cleanup(4, !settings.DontCleanup)
-				return -1, errors.New("Key not accepted")
+			if settings.Decimal == 0 {
+				if settings.ExitOnUnknownKey {
+					ansi.CursorVisible()
+					return -1, errors.New("Key not accepted")
+				} else {
+					continue
+				}
 			}
 			if !strings.Contains(manualInputBuffer.String(), ".") {
 				manualInputBuffer.WriteString(".")
@@ -191,16 +206,16 @@ func NumberPicker(customSettings ...Settings) (number float64, err error) {
 				manualInputBuffer.WriteString("-")
 			}
 		} else if ascii == 13 { // CR
-			utils.Cleanup(4, !settings.DontCleanup)
-			number = utils.StringToFloat(manualInputBuffer.String())
-			number = utils.RoundTo(number, settings.Round)
+			number = stringToFloat(manualInputBuffer.String())
+			number = roundTo(number, settings.Decimal)
+			ansi.CursorVisible()
 			return number, nil
 		} else {
-			if settings.UnknownKeysErr {
-				utils.Cleanup(4, !settings.DontCleanup)
+			if settings.ExitOnUnknownKey {
+				ansi.CursorVisible()
 				return -1, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				utils.Cleanup(4, !settings.DontCleanup)
+				ansi.CursorVisible()
 				return -1, errors.New("SIGINT")
 			}
 		}
