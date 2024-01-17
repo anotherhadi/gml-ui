@@ -1,12 +1,19 @@
+// https://github.com/anotherhadi/gml-ui
 package ansi
 
 import (
 	"fmt"
+
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
+// Escape code
 const ESC = "\033"
 
-// Text Styling
+//
+//        Text Styling
+//
+
 // Ex: fmt.Println(ansi.Underline + "Underlined text")
 const (
 	Reset      = ESC + "[0m"
@@ -19,7 +26,10 @@ const (
 	CrossedOut = ESC + "[9m"
 )
 
-// Text Color
+//
+//        Foreground color
+//
+
 // Ex: fmt.Println(ansi.Blue + "Blue text")
 const (
 	Black   = ESC + "[30m"
@@ -43,7 +53,7 @@ const (
 
 // 256 Foreground Color
 // Ex: fmt.Println(ansi.Fg256(27) + "Blue text")
-func Fg256(color uint8) string {
+func Fg256(color int) string {
 	return fmt.Sprintf("%s[38;5;%dm", ESC, color)
 }
 
@@ -53,7 +63,14 @@ func FgRgb(red, green, blue uint8) string {
 	return fmt.Sprintf("%s[38;2;%d;%d;%dm", ESC, red, green, blue)
 }
 
-// Background Color
+func FgRgbSettings(s settings.Color) string {
+	return fmt.Sprintf("%s[38;2;%d;%d;%dm", ESC, s.Red, s.Green, s.Blue)
+}
+
+//
+//        Background color
+//
+
 // Ex: fmt.Println(ansi.BgBlue + "Text with a blue background")
 const (
 	BgBlack   = ESC + "[40m"
@@ -77,7 +94,7 @@ const (
 
 // 256 Background Color
 // Ex: fmt.Println(ansi.Bg256(27) + "Text with a blue background")
-func Bg256(color uint8) string {
+func Bg256(color int) string {
 	return fmt.Sprintf("%s[48;5;%dm", ESC, color)
 }
 
@@ -87,7 +104,13 @@ func BgRgb(red, green, blue uint8) string {
 	return fmt.Sprintf("%s[48;2;%d;%d;%dm", ESC, red, green, blue)
 }
 
-//// Cursor Movement
+func BgRgbSettings(s settings.Color) string {
+	return fmt.Sprintf("%s[48;2;%d;%d;%dm", ESC, s.Red, s.Green, s.Blue)
+}
+
+//
+//        Cursor Movement
+//
 
 // Move cursor to {line}, {col}
 // Ex: ansi.CursorMove(10,20)
@@ -97,25 +120,25 @@ func CursorMove(line, col int) {
 
 // Move cursor {line} up
 // Ex: ansi.CursorUp(10)
-func CursorUp(line int) {
+func CursorUpN(line int) {
 	fmt.Printf("%s[%dA", ESC, line)
 }
 
 // Move cursor {line} down
 // Ex: ansi.CursorDown(10)
-func CursorDown(line int) {
+func CursorDownN(line int) {
 	fmt.Printf("%s[%dB", ESC, line)
 }
 
 // Move cursor {col} right
 // Ex: ansi.CursorRight(10)
-func CursorRight(col int) {
+func CursorRightN(col int) {
 	fmt.Printf("%s[%dC", ESC, col)
 }
 
 // Move cursor {col} left
 // Ex: ansi.CursorLeft(10)
-func CursorLeft(col int) {
+func CursorLeftN(col int) {
 	fmt.Printf("%s[%dD", ESC, col)
 }
 
@@ -141,15 +164,33 @@ func CursorRestore() {
 	fmt.Printf("%s[u", ESC)
 }
 
+// Make cursor visible
+func CursorVisible() {
+	fmt.Printf("%s[?25h", ESC)
+}
+
 // Make cursor invisible
 func CursorInvisible() {
 	fmt.Printf("%s[?25l", ESC)
 }
 
-// Make cursor visible
-func CursorVisible() {
-	fmt.Printf("%s[?25h", ESC)
+//
+//        Alternative buffer
+//
+
+// Enables the alternative buffer
+func AlternativeBufferEnable() {
+	fmt.Printf("%s[?1049h", ESC)
 }
+
+// Disables the alternative buffer
+func AlternativeBufferDisable() {
+	fmt.Printf("%s[?1049l", ESC)
+}
+
+//
+//        Screen
+//
 
 // Save the screen
 func ScreenSave() {
@@ -161,49 +202,41 @@ func ScreenRestore() {
 	fmt.Printf("%s[?47l", ESC)
 }
 
-// Enables the alternative buffer
-func EnableAlternativeBuffer() {
-	fmt.Printf("%s[?1049h", ESC)
-}
-
-// Disables the alternative buffer
-func DisableAlternativeBuffer() {
-	fmt.Printf("%s[?1049l", ESC)
-}
-
-//// Clear/Erase
-
-// Clear the full screen
-func ClearScreen() {
+// Clear the entire screen
+func ScreenClear() {
 	fmt.Printf("%s[2J", ESC)
 }
 
 // Clear screen up
-func ClearScreenUp() {
+func ScreenClearUp() {
 	fmt.Printf("%s[1J", ESC)
 }
 
 // Clear screen down
-func ClearScreenDown() {
+func ScreenClearDown() {
 	fmt.Printf("%s[0J", ESC)
 }
 
 // Clear screen to the end
-func ClearScreenEnd() {
+func ScreenClearEnd() {
 	fmt.Printf("%s[J", ESC)
 }
 
+//
+//        Clear Lines
+//
+
 // Clear the entire line
-func ClearLine() {
+func LineClear() {
 	fmt.Printf("%s[2K", ESC)
 }
 
 // Clear start of line to the cursor
-func ClearLineStart() {
+func LineClearStart() {
 	fmt.Printf("%s[1K", ESC)
 }
 
 // Clear from cursor to end of line
-func ClearLineEnd() {
+func LineClearEnd() {
 	fmt.Printf("%s[K", ESC)
 }
