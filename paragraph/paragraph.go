@@ -1,36 +1,56 @@
+// https://github.com/anotherhadi/gml-ui
 package paragraph
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
-func printParagraph(str string, settings Settings) {
-	fmt.Print(utils.Repeat("\n", int(settings.TopPadding)))
-	fmt.Print(ansi.FgRgb(settings.Foreground.Red, settings.Foreground.Green, settings.Foreground.Blue))
-	if settings.Background != (RGBColor{}) {
-		fmt.Print(ansi.BgRgb(settings.Background.Red, settings.Background.Green, settings.Background.Blue))
+func splitPrompt(prompt string, maxCols int) []string {
+	var result []string
+
+	words := strings.Fields(prompt)
+
+	var currentLine string
+	for _, word := range words {
+		if len(currentLine)+len(word)+1 <= maxCols {
+			if currentLine != "" {
+				currentLine += " "
+			}
+			currentLine += word
+		} else {
+			result = append(result, currentLine)
+			currentLine = word
+		}
 	}
-	var splitedPrompt []string = utils.SplitPrompt(str, settings.MaxCols)
+
+	if currentLine != "" {
+		result = append(result, currentLine)
+	}
+
+	return result
+}
+
+func printParagraph(str string, settings settings.Settings) {
+	fmt.Print(strings.Repeat("\n", int(settings.TopPadding)))
+	fmt.Print(ansi.FgRgbSettings(settings.TextColor))
+	var splitedPrompt []string = splitPrompt(str, settings.MaxCols)
+
 	for _, line := range splitedPrompt {
-		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
+		fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 		fmt.Println(line)
 	}
 	fmt.Print(ansi.Reset)
-	fmt.Print(utils.Repeat("\n", int(settings.BottomPadding)))
+
+	fmt.Print(strings.Repeat("\n", int(settings.BottomPadding)))
 }
 
-func Paragraph(str string, customSettings ...Settings) {
+func Paragraph(str string, customSettings ...settings.Settings) {
 
-	var settings Settings
-
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
+	settings := settings.GetSettings(customSettings)
 
 	printParagraph(str, settings)
 }
