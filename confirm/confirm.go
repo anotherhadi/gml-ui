@@ -1,44 +1,27 @@
+// https://github.com/anotherhadi/gml-ui
 package confirm
 
 import (
 	"errors"
 	"fmt"
-	"math"
+	"strings"
 
 	"github.com/anotherhadi/gml-ui/ansi"
 	"github.com/anotherhadi/gml-ui/getchar"
-	"github.com/anotherhadi/gml-ui/utils"
+	"github.com/anotherhadi/gml-ui/settings"
 )
 
-func printPrompt(settings Settings) {
-	var promptLength int = len(settings.Prompt)
-	var optionsLength int = len(settings.Affirmative) + len(settings.Negative) + 13
-	fmt.Print("\n")
-	fmt.Print(ansi.FgRgb(settings.PromptForeground.Red, settings.PromptForeground.Green, settings.PromptForeground.Blue))
-	var splitedPrompt []string = utils.SplitPrompt(settings.Prompt, int(settings.MaxCols))
-	for _, line := range splitedPrompt {
-		fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-		fmt.Print(utils.Repeat(" ", (optionsLength-promptLength)/2))
-		fmt.Println(line)
-	}
-	fmt.Print(ansi.Reset)
-	fmt.Print("\n")
-}
-
-func printOptions(settings Settings, selection bool) {
-	var promptLength int = int(math.Min(float64(len(settings.Prompt)), float64(settings.MaxCols)))
-	var optionsLength int = len(settings.Affirmative) + len(settings.Negative) + 13
-
-	fmt.Print("\r")
-	fmt.Print(utils.Repeat(" ", int(settings.LeftPadding)))
-	fmt.Print(utils.Repeat(" ", (promptLength-optionsLength)/2))
+func printOptions(settings settings.Settings, selection bool) {
+	ansi.CursorUpN(1 + settings.TopPadding + settings.BottomPadding)
+	fmt.Print(strings.Repeat("\n", settings.TopPadding))
+	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 
 	if selection {
-		fmt.Print(ansi.BgRgb(settings.SelectedColor.BackgroundColor.Red, settings.SelectedColor.BackgroundColor.Green, settings.SelectedColor.BackgroundColor.Blue))
-		fmt.Print(ansi.FgRgb(settings.SelectedColor.ForegroundColor.Red, settings.SelectedColor.ForegroundColor.Green, settings.SelectedColor.ForegroundColor.Blue))
+		fmt.Print(ansi.BgRgbSettings(settings.AccentColor))
+		fmt.Print(ansi.FgRgbSettings(settings.AccentBackgroundColor))
 	} else {
-		fmt.Print(ansi.BgRgb(settings.UnselectedColor.BackgroundColor.Red, settings.UnselectedColor.BackgroundColor.Green, settings.UnselectedColor.BackgroundColor.Blue))
-		fmt.Print(ansi.FgRgb(settings.UnselectedColor.ForegroundColor.Red, settings.UnselectedColor.ForegroundColor.Green, settings.UnselectedColor.ForegroundColor.Blue))
+		fmt.Print(ansi.BgRgbSettings(settings.SecondaryColor))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryBackgroundColor))
 	}
 	fmt.Print("   ")
 	fmt.Print(settings.Affirmative)
@@ -47,71 +30,55 @@ func printOptions(settings Settings, selection bool) {
 	fmt.Print(ansi.Reset, "  ")
 
 	if !selection {
-		fmt.Print(ansi.BgRgb(settings.SelectedColor.BackgroundColor.Red, settings.SelectedColor.BackgroundColor.Green, settings.SelectedColor.BackgroundColor.Blue))
-		fmt.Print(ansi.FgRgb(settings.SelectedColor.ForegroundColor.Red, settings.SelectedColor.ForegroundColor.Green, settings.SelectedColor.ForegroundColor.Blue))
+		fmt.Print(ansi.BgRgbSettings(settings.AccentColor))
+		fmt.Print(ansi.FgRgbSettings(settings.AccentBackgroundColor))
 	} else {
-		fmt.Print(ansi.BgRgb(settings.UnselectedColor.BackgroundColor.Red, settings.UnselectedColor.BackgroundColor.Green, settings.UnselectedColor.BackgroundColor.Blue))
-		fmt.Print(ansi.FgRgb(settings.UnselectedColor.ForegroundColor.Red, settings.UnselectedColor.ForegroundColor.Green, settings.UnselectedColor.ForegroundColor.Blue))
+		fmt.Print(ansi.BgRgbSettings(settings.SecondaryColor))
+		fmt.Print(ansi.FgRgbSettings(settings.SecondaryBackgroundColor))
 	}
 	fmt.Print("   ")
 	fmt.Print(settings.Negative)
 	fmt.Print("   ")
 
-	fmt.Print(ansi.Reset)
+	fmt.Print(ansi.Reset, "\n")
+	fmt.Print(strings.Repeat("\n", settings.BottomPadding))
 }
 
-func Confirm(customSettings ...Settings) (selected bool, err error) {
+func Confirm(customSettings ...settings.Settings) (result bool, err error) {
 
-	var settings Settings
+	settings := settings.GetSettings(customSettings)
 
-	if len(customSettings) > 0 {
-		settings = combineSettings(customSettings[0])
-	} else {
-		settings = getDefaultSettings()
-	}
+	result = settings.DefaultBool
 
-	selected = !settings.DefaultToFalse
-
-	var blankLine int = 3
-	if settings.Prompt != "noprompt" {
-		blankLine += int(len(settings.Prompt)/int(settings.MaxCols)) + 2
-	}
-	fmt.Print(utils.Repeat("\n", blankLine))
-	ansi.CursorUp(blankLine)
-
-	ansi.CursorSave()
+	fmt.Print(strings.Repeat("\n", settings.TopPadding+1+settings.BottomPadding))
 	ansi.CursorInvisible()
 
-	if settings.Prompt != "noprompt" {
-		printPrompt(settings)
-	}
-
 	for {
-		printOptions(settings, selected)
+		printOptions(settings, result)
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			utils.Cleanup(2, !settings.DontCleanup)
+			ansi.CursorVisible()
 			return false, err
 		}
 
 		if arrow == "left" || ascii == 104 || ascii == 121 { // Left arrow, H or Y
-			selected = true
+			result = true
 		} else if arrow == "right" || ascii == 108 || ascii == 110 { // Right arrow, L or N
-			selected = false
+			result = false
 		} else if !(ascii == 13) {
-			if settings.UnknownKeysErr {
-				utils.Cleanup(2, !settings.DontCleanup)
+			if settings.ExitOnUnknownKey {
+				ansi.CursorVisible()
 				return false, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				utils.Cleanup(2, !settings.DontCleanup)
+				ansi.CursorVisible()
 				return false, errors.New("SIGINT")
 			}
 		}
 
 		if ascii == 13 || ascii == 121 || ascii == 110 { // Enter, Y, N
-			utils.Cleanup(2, !settings.DontCleanup)
-			return selected, nil
+			ansi.CursorVisible()
+			return result, nil
 		}
 	}
 }
