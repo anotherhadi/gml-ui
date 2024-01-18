@@ -59,6 +59,7 @@ func printOption(settings settings.Settings, selected bool, title string, descri
 
 	fmt.Print(ansi.Bold)
 	fmt.Println(title)
+	fmt.Print(ansi.Reset)
 
 	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 	if selected {

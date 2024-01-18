@@ -752,9 +752,7 @@ func AsciiText(str string, customSettings ...settings.Settings) string {
 		} else {
 			result += asciiString[i]
 		}
-		if i < 5 {
-			result += "\n"
-		}
+		result += "\n"
 	}
 	result += strings.Repeat("\n", settings.BottomPadding)
 
