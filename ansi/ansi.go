@@ -113,65 +113,65 @@ func BgRgbSettings(s settings.Color) string {
 //
 
 // Move cursor to {line}, {col}
-// Ex: ansi.CursorMove(10,20)
-func CursorMove(line, col int) {
-	fmt.Printf("%s[%d;%dH", ESC, line, col)
+// Ex: fmt.Print(ansi.CursorMove(10,20))
+func CursorMove(line, col int) string {
+	return fmt.Sprintf("%s[%d;%dH", ESC, line, col)
 }
 
 // Move cursor {line} up
-// Ex: ansi.CursorUp(10)
-func CursorUpN(line int) {
-	fmt.Printf("%s[%dA", ESC, line)
+// Ex: fmt.Print(ansi.CursorUp(10))
+func CursorUpN(line int) string {
+	return fmt.Sprintf("%s[%dA", ESC, line)
 }
 
 // Move cursor {line} down
-// Ex: ansi.CursorDown(10)
-func CursorDownN(line int) {
-	fmt.Printf("%s[%dB", ESC, line)
+// Ex: fmt.Print(ansi.CursorDown(10))
+func CursorDownN(line int) string {
+	return fmt.Sprintf("%s[%dB", ESC, line)
 }
 
 // Move cursor {col} right
-// Ex: ansi.CursorRight(10)
-func CursorRightN(col int) {
-	fmt.Printf("%s[%dC", ESC, col)
+// Ex: fmt.Print(ansi.CursorRight(10))
+func CursorRightN(col int) string {
+	return fmt.Sprintf("%s[%dC", ESC, col)
 }
 
 // Move cursor {col} left
-// Ex: ansi.CursorLeft(10)
-func CursorLeftN(col int) {
-	fmt.Printf("%s[%dD", ESC, col)
+// Ex: fmt.Print(ansi.CursorLeft(10))
+func CursorLeftN(col int) string {
+	return fmt.Sprintf("%s[%dD", ESC, col)
 }
 
 // Move cursor to {col}
-// Ex: ansi.CursorCol(10)
-func CursorCol(col int) {
-	fmt.Printf("%s[%dG", ESC, col)
+// Ex: fmt.Print(ansi.CursorCol(10))
+func CursorCol(col int) string {
+	return fmt.Sprintf("%s[%dG", ESC, col)
 }
 
 // Move cursor to Home (0,0)
-// Ex: ansi.CursorHome()
-func CursorHome() {
-	fmt.Printf("%s[H", ESC)
+// Ex: fmt.Print(ansi.CursorHome())
+func CursorHome() string {
+	return fmt.Sprintf("%s[H", ESC)
 }
 
 // Save cursor position
-func CursorSave() {
-	fmt.Printf("%s[s", ESC)
+func CursorSave() string {
+	return fmt.Sprintf("%s[s", ESC)
 }
 
 // Restore cursor position
-func CursorRestore() {
-	fmt.Printf("%s[u", ESC)
+func CursorRestore() string {
+	return fmt.Sprintf("%s[u", ESC)
 }
 
 // Make cursor visible
-func CursorVisible() {
-	fmt.Printf("%s[?25h", ESC)
+func CursorVisible() string {
+	return fmt.Sprintf("%s[?25h", ESC)
 }
 
 // Make cursor invisible
-func CursorInvisible() {
-	fmt.Printf("%s[?25l", ESC)
+func CursorInvisible() string {
+	return fmt.Sprintf("%s[?25l", ESC)
 }
 
 //
@@ -179,13 +179,13 @@ func CursorInvisible() {
 //
 
 // Enables the alternative buffer
-func AlternativeBufferEnable() {
-	fmt.Printf("%s[?1049h", ESC)
+func AlternativeBufferEnable() string {
+	return fmt.Sprintf("%s[?1049h", ESC)
 }
 
 // Disables the alternative buffer
-func AlternativeBufferDisable() {
-	fmt.Printf("%s[?1049l", ESC)
+func AlternativeBufferDisable() string {
+	return fmt.Sprintf("%s[?1049l", ESC)
 }
 
 //
@@ -193,33 +193,33 @@ func AlternativeBufferDisable() {
 //
 
 // Save the screen
-func ScreenSave() {
-	fmt.Printf("%s[?47h", ESC)
+func ScreenSave() string {
+	return fmt.Sprintf("%s[?47h", ESC)
 }
 
 // Restore the screen
-func ScreenRestore() {
-	fmt.Printf("%s[?47l", ESC)
+func ScreenRestore() string {
+	return fmt.Sprintf("%s[?47l", ESC)
 }
 
 // Clear the entire screen
-func ScreenClear() {
-	fmt.Printf("%s[2J", ESC)
+func ScreenClear() string {
+	return fmt.Sprintf("%s[2J", ESC)
 }
 
 // Clear screen up
-func ScreenClearUp() {
-	fmt.Printf("%s[1J", ESC)
+func ScreenClearUp() string {
+	return fmt.Sprintf("%s[1J", ESC)
 }
 
 // Clear screen down
-func ScreenClearDown() {
-	fmt.Printf("%s[0J", ESC)
+func ScreenClearDown() string {
+	return fmt.Sprintf("%s[0J", ESC)
 }
 
 // Clear screen to the end
-func ScreenClearEnd() {
-	fmt.Printf("%s[J", ESC)
+func ScreenClearEnd() string {
+	return fmt.Sprintf("%s[J", ESC)
 }
 
 //
@@ -227,16 +227,16 @@ func ScreenClearEnd() {
 //
 
 // Clear the entire line
-func LineClear() {
-	fmt.Printf("%s[2K", ESC)
+func LineClear() string {
+	return fmt.Sprintf("%s[2K", ESC)
 }
 
 // Clear start of line to the cursor
-func LineClearStart() {
-	fmt.Printf("%s[1K", ESC)
+func LineClearStart() string {
+	return fmt.Sprintf("%s[1K", ESC)
 }
 
 // Clear from cursor to end of line
-func LineClearEnd() {
-	fmt.Printf("%s[K", ESC)
+func LineClearEnd() string {
+	return fmt.Sprintf("%s[K", ESC)
 }

@@ -12,7 +12,7 @@ import (
 )
 
 func printOptions(settings settings.Settings, selection bool) {
-	ansi.CursorUpN(1 + settings.TopPadding + settings.BottomPadding)
+	fmt.Print(ansi.CursorUpN(1 + settings.TopPadding + settings.BottomPadding))
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
 
@@ -51,14 +51,14 @@ func Confirm(customSettings ...settings.Settings) (result bool, err error) {
 	result = settings.DefaultBool
 
 	fmt.Print(strings.Repeat("\n", settings.TopPadding+1+settings.BottomPadding))
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 
 	for {
 		printOptions(settings, result)
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return false, err
 		}
 
@@ -68,10 +68,10 @@ func Confirm(customSettings ...settings.Settings) (result bool, err error) {
 			result = false
 		} else if !(ascii == 13) {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return false, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return false, errors.New("SIGINT")
 			}
 		}

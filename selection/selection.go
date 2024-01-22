@@ -95,16 +95,16 @@ func printOptions(settings settings.Settings, options []string, selected int, fi
 	if maxRows > previousLength {
 		maxRows = previousLength
 	}
-	ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding)
+	fmt.Print(ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding))
 	maxRows = settings.MaxRows - settings.TopPadding - settings.BottomPadding
 	if maxRows > len(options) {
 		maxRows = len(options)
 	}
 
 	if settings.Filter {
-		ansi.CursorUpN(1)
+		fmt.Print(ansi.CursorUpN(1))
 	}
-	ansi.ScreenClearEnd()
+	fmt.Print(ansi.ScreenClearEnd())
 
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 	if settings.Filter {
@@ -112,7 +112,7 @@ func printOptions(settings settings.Settings, options []string, selected int, fi
 		fmt.Print(ansi.FgRgbSettings(settings.SecondaryColor))
 		fmt.Print("Filter: ")
 		fmt.Print(ansi.FgRgbSettings(settings.AccentColor))
-		ansi.LineClearEnd()
+		fmt.Print(ansi.LineClearEnd())
 		if filter == "" {
 			fmt.Print("<type to add filter>")
 		} else {
@@ -164,7 +164,7 @@ func Selection(options []string, customSettings ...settings.Settings) (selected 
 		fmt.Print("\n")
 	}
 
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 
 	for {
 		var filteredOptions []string = filterStringsByPrefix(options, filterBuffer.String(), settings.CaseSensitive)
@@ -173,7 +173,7 @@ func Selection(options []string, customSettings ...settings.Settings) (selected 
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return selected, err
 		}
 
@@ -200,7 +200,7 @@ func Selection(options []string, customSettings ...settings.Settings) (selected 
 				filterBuffer.Truncate(filterBuffer.Len() - 1)
 			}
 		} else if ascii == 13 { // CR
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			if len(filteredOptions) == 0 {
 				return -1, errors.New("Returned nothing")
 			}
@@ -212,10 +212,10 @@ func Selection(options []string, customSettings ...settings.Settings) (selected 
 			return -1, errors.New("Unable to find in list")
 		} else {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("SIGINT")
 			}
 		}

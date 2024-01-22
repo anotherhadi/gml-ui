@@ -56,8 +56,8 @@ func getBoxStyle(s string) boxStyle {
 func printInputPicker(settings settings.Settings, number string, maxLength int) {
 
 	boxStyle := getBoxStyle(settings.Style)
-	ansi.CursorUpN(settings.TopPadding + 3 + settings.BottomPadding)
-	ansi.ScreenClearEnd()
+	fmt.Print(ansi.CursorUpN(settings.TopPadding + 3 + settings.BottomPadding))
+	fmt.Print(ansi.ScreenClearEnd())
 
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 
@@ -142,7 +142,7 @@ func NumberPicker(customSettings ...settings.Settings) (number float64, err erro
 		maxLength += settings.Decimal
 	}
 
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 	fmt.Print(strings.Repeat("\n", settings.TopPadding+3+settings.BottomPadding))
 
 	for {
@@ -150,7 +150,7 @@ func NumberPicker(customSettings ...settings.Settings) (number float64, err erro
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return -1, err
 		}
 
@@ -188,7 +188,7 @@ func NumberPicker(customSettings ...settings.Settings) (number float64, err erro
 		} else if ascii == 46 { // Dot
 			if settings.Decimal == 0 {
 				if settings.ExitOnUnknownKey {
-					ansi.CursorVisible()
+					fmt.Print(ansi.CursorVisible())
 					return -1, errors.New("Key not accepted")
 				} else {
 					continue
@@ -208,14 +208,14 @@ func NumberPicker(customSettings ...settings.Settings) (number float64, err erro
 		} else if ascii == 13 { // CR
 			number = stringToFloat(manualInputBuffer.String())
 			number = roundTo(number, settings.Decimal)
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return number, nil
 		} else {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("SIGINT")
 			}
 		}

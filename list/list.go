@@ -91,8 +91,8 @@ func printOptions(settings settings.Settings, options [][]string, selected int) 
 	var moreAfter, moreBefore bool
 	start, end, moreBefore, moreAfter = getRange(len(options), selected, maxRows/3+1)
 
-	ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding - maxRows%3)
-	ansi.ScreenClearEnd()
+	fmt.Print(ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding - maxRows%3))
+	fmt.Print(ansi.ScreenClearEnd())
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 
 	if moreBefore {
@@ -131,7 +131,7 @@ func List(options [][]string, customSettings ...settings.Settings) (selected int
 	}
 	fmt.Print(strings.Repeat("\n", maxRows+settings.TopPadding+settings.BottomPadding-maxRows%3))
 
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 
 	for {
 		printOptions(settings, options, selected)
@@ -154,14 +154,14 @@ func List(options [][]string, customSettings ...settings.Settings) (selected int
 				selected = len(options) - 1
 			}
 		} else if ascii == 13 { // Enter
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return selected, nil
 		} else {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return -1, errors.New("SIGINT")
 			}
 		}

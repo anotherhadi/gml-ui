@@ -75,8 +75,8 @@ func printOptions(settings settings.Settings, selected int, options []string, ch
 
 	start, end, moreBefore, moreAfter := getRange(len(options), selected, maxRows+1)
 
-	ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding)
-	ansi.ScreenClearEnd()
+	fmt.Print(ansi.CursorUpN(maxRows + settings.TopPadding + settings.BottomPadding))
+	fmt.Print(ansi.ScreenClearEnd())
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 
 	if moreBefore {
@@ -112,7 +112,7 @@ func Checkbox(options []string, customSettings ...settings.Settings) (checked []
 		checked = make([]bool, len(options))
 	}
 
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 
 	if len(options) > settings.MaxRows-settings.TopPadding-settings.BottomPadding {
 		fmt.Print(strings.Repeat("\n", settings.MaxRows))
@@ -125,7 +125,7 @@ func Checkbox(options []string, customSettings ...settings.Settings) (checked []
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return nil, err
 		}
 
@@ -153,15 +153,15 @@ func Checkbox(options []string, customSettings ...settings.Settings) (checked []
 				}
 			}
 			if nselected <= int(settings.Maximum) && nselected >= int(settings.Minimum) {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return checked, nil
 			}
 		} else {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return nil, errors.New("Key not accepted")
 			} else if ascii == 3 { // Ctrl C
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return nil, errors.New("SIGINT")
 			}
 		}

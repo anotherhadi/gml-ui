@@ -23,7 +23,7 @@ func Loading(loadingChan chan bool, customSettings ...settings.Settings) {
 		select {
 		case <-loadingChan:
 			fmt.Print("\r")
-			ansi.LineClear()
+			fmt.Print(ansi.LineClear())
 			return
 
 		default:

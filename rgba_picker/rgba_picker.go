@@ -52,8 +52,8 @@ func getBoxStyle(s string) boxStyle {
 }
 
 func printRgbaPicker(settings settings.Settings, rgba [4]int, selected int) {
-	ansi.CursorUpN(settings.TopPadding + 5 + settings.BottomPadding)
-	ansi.ScreenClearDown()
+	fmt.Print(ansi.CursorUpN(settings.TopPadding + 5 + settings.BottomPadding))
+	fmt.Print(ansi.ScreenClearDown())
 	fmt.Print(strings.Repeat("\n", settings.TopPadding))
 	length := 5*4 + 3
 	fmt.Print(strings.Repeat(" ", int(settings.LeftPadding)))
@@ -134,7 +134,7 @@ func RgbaPicker(customSettings ...settings.Settings) (rgba [4]int, err error) {
 	rgba = [4]int{int(settings.DefaultColor.Red), int(settings.DefaultColor.Green), int(settings.DefaultColor.Blue), 255}
 	var selected int = 0
 
-	ansi.CursorInvisible()
+	fmt.Print(ansi.CursorInvisible())
 
 	fmt.Print(strings.Repeat("\n", settings.TopPadding+5+settings.BottomPadding))
 
@@ -143,7 +143,7 @@ func RgbaPicker(customSettings ...settings.Settings) (rgba [4]int, err error) {
 
 		ascii, arrow, err := getchar.GetChar()
 		if err != nil {
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return [4]int{}, err
 		}
 
@@ -171,14 +171,14 @@ func RgbaPicker(customSettings ...settings.Settings) (rgba [4]int, err error) {
 		} else if ascii == 127 { // Del
 			rgba[selected] = int(rgba[selected] / 10)
 		} else if ascii == 13 { // CR
-			ansi.CursorVisible()
+			fmt.Print(ansi.CursorVisible())
 			return rgba, nil
 		} else {
 			if settings.ExitOnUnknownKey {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return [4]int{}, errors.New("Key not accepted")
 			} else if ascii == 3 {
-				ansi.CursorVisible()
+				fmt.Print(ansi.CursorVisible())
 				return [4]int{}, errors.New("SIGINT")
 			}
 		}
