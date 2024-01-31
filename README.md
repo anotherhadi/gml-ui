@@ -2,6 +2,9 @@
 	<img src="https://file.anotherhadi.com/logo-gml-ui.png"
 </p>
 
+# Deprecated
+# Now here: [anotherhadi/wtui-components](https://github.com/anotherhadi/wtui-components)
+
 # GML-UI
 ## Go Missing Library - UI
 
